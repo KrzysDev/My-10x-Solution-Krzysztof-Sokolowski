@@ -1,7 +1,9 @@
+import json
 import os
 import sys
 import threading
 import time
+from datetime import datetime
 
 
 IS_WINDOWS = sys.platform.startswith("win")
@@ -13,14 +15,18 @@ else:
 
 
 class Console:
-
     STOP_COMMAND = "stop recording"
+    LOG_FILENAME = "recording.json"
 
-    def __init__(self, autostart=True):
+    def __init__(self, recorded_logs_path=".", autostart=True):
         self.shell = None
         self.newline = "\n"
         self._reader_thread = None
         self._stopped = False
+
+        self.recorded_logs_path = recorded_logs_path
+        self.entered_commands = []
+        os.makedirs(self.recorded_logs_path, exist_ok=True)
 
         if autostart:
             self.start()
@@ -72,6 +78,8 @@ class Console:
             self.stop()
             return None
 
+        self._log_command(command)
+
         try:
             self.shell.write(command + self.newline)
         except EOFError:
@@ -79,6 +87,16 @@ class Console:
             return None
 
         return command
+
+    def _log_command(self, command):
+        self.entered_commands.append({
+            "command": command,
+            "timestamp": datetime.now().isoformat(),
+        })
+
+        log_path = os.path.join(self.recorded_logs_path, self.LOG_FILENAME)
+        with open(log_path, "w", encoding="utf-8") as f:
+            json.dump(self.entered_commands, f, ensure_ascii=False, indent=2)
 
     def _spawn_shell(self):
         if IS_WINDOWS:
@@ -116,6 +134,6 @@ class Console:
 
 
 if __name__ == "__main__":
-    console = Console()
+    console = Console(recorded_logs_path="./logs")
     while console.is_alive():
         console.prompt()
