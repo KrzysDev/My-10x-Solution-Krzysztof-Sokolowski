@@ -24,7 +24,7 @@ class Console:
         self._reader_thread = None
         self._stopped = False
 
-        self.recorded_logs_path = f"./recordings/logs/{recording_name}"
+        self.recorded_logs_path = f"./recordings/{recording_name}/logs"
         self.entered_commands = []
         os.makedirs(self.recorded_logs_path, exist_ok=True)
 

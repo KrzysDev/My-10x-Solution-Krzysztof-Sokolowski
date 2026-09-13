@@ -9,7 +9,9 @@ authors = [
 requires-python = ">=3.14"
 dependencies = [
     "fastapi>=0.141.1",
+    "pillow>=12.3.0",
     "ptyprocess>=0.7.0",
+    "pyscreenshot>=3.1",
     "pywinpty>=3.0.5",
     "uvicorn>=0.52.4",
 ]
