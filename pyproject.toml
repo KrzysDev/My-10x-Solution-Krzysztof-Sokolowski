@@ -13,6 +13,7 @@ dependencies = [
     "ptyprocess>=0.7.0",
     "pyscreenshot>=3.1",
     "pywinpty>=3.0.5",
+    "rich>=15.0.0",
     "uvicorn>=0.52.4",
 ]
 
