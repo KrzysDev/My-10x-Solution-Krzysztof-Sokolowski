@@ -18,13 +18,13 @@ class Console:
     STOP_COMMAND = "stop recording"
     LOG_FILENAME = "recording.json"
 
-    def __init__(self, recorded_logs_path=".", autostart=True):
+    def __init__(self, recording_name = "recording1", autostart=True):
         self.shell = None
         self.newline = "\n"
         self._reader_thread = None
         self._stopped = False
 
-        self.recorded_logs_path = recorded_logs_path
+        self.recorded_logs_path = f"./recordings/logs/{recording_name}"
         self.entered_commands = []
         os.makedirs(self.recorded_logs_path, exist_ok=True)
 
@@ -134,6 +134,6 @@ class Console:
 
 
 if __name__ == "__main__":
-    console = Console(recorded_logs_path="./logs")
+    console = Console()
     while console.is_alive():
         console.prompt()
