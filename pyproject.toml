@@ -12,8 +12,11 @@ dependencies = [
     "pillow>=12.3.0",
     "ptyprocess>=0.7.0",
     "pyscreenshot>=3.1",
+    "python-dotenv>=1.2.3",
     "pywinpty>=3.0.5",
+    "requests>=2.34.2",
     "rich>=15.0.0",
+    "supabase>=2.31.0",
     "uvicorn>=0.52.4",
 ]
 

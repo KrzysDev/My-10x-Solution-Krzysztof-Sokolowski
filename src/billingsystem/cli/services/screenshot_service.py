@@ -1,7 +1,6 @@
 from datetime import datetime
 import os
 import threading
-import time
 
 import pyscreenshot
 
@@ -37,3 +36,5 @@ class ScreenshotService:
             image.save(file_path)
 
             self._stop_event.wait(self.interval)
+
+            #todo: instead of waiting - request to backend to analyze this frame and save it to the database
