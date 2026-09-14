@@ -125,6 +125,25 @@ def main() -> None:
 
     if args.record is not None:
         print_banner()
+        
+        from billingsystem.backend.services.supabase_service import SupabaseService
+        from billingsystem.backend.services.auth_service import AuthService
+        
+        try:
+            supabase_service = SupabaseService()
+            auth_service = AuthService(supabase_service)
+
+            email = input("email: ")
+            password = input("password: ")
+
+            user_id = auth_service.login(email=email, password=password)
+
+            #print(user_id)
+            
+        except Exception as e:
+            console.print(f"[bold red]Błąd inicjalizacji Supabase:[/] {e}")
+            return
+            
         session_name = args.record.strip()
         if not session_name:
             session_name, interval = prompt_session_config()
@@ -135,6 +154,22 @@ def main() -> None:
 
     if args.recordings or args.open:
         open_recordings_folder()
+        return
+
+    from billingsystem.backend.services.supabase_service import SupabaseService
+    from billingsystem.backend.services.auth_service import AuthService
+    
+    try:
+        supabase_service = SupabaseService()
+        auth_service = AuthService(supabase_service)
+        email = input("email: ")
+        password = input("password: ")
+
+        user_id = auth_service.login(email=email, password=password)
+
+        #print(user_id)
+    except Exception as e:
+        console.print(f"[bold red]Błąd inicjalizacji Supabase:[/] {e}")
         return
 
     while True:
