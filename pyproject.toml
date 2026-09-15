@@ -10,6 +10,7 @@ requires-python = ">=3.14"
 dependencies = [
     "fastapi>=0.141.1",
     "gotrue>=2.12.4",
+    "ollama>=0.6.2",
     "pillow>=12.3.0",
     "ptyprocess>=0.7.0",
     "pyscreenshot>=3.1",
