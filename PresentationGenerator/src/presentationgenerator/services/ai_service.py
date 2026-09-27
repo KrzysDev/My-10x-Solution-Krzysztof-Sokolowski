@@ -12,8 +12,8 @@ class AiService:
         model=self.MODEL,
         messages=[
             {
-            'role': 'user',
-            'content': prompt,
+                'role': 'user',
+                'content': prompt,
             },
         ],
         )
@@ -26,4 +26,3 @@ if __name__ == "__main__":
 
     print(service.ask("dlaczego niebo jest niebieskie?"))
 
-    
