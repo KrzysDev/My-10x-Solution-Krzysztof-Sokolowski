@@ -10,6 +10,9 @@ requires-python = ">=3.14"
 dependencies = [
     "fastapi>=0.141.1",
     "ollama>=0.6.2",
+    "pypdf>=6.19.0",
+    "python-multipart>=0.0.32",
+    "supabase>=2.31.0",
     "textract>=2.1.0",
     "uvicorn>=0.54.0",
 ]

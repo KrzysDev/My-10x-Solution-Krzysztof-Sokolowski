@@ -79,7 +79,7 @@ class PresentationService:
         raw_response = self.ai_service.ask(prompt)
         return self._clean_html_response(raw_response)
 
-    def create_from_text(
+    def _create_from_text(
         self,
         text: str,
         topic: str = "Presentation",
@@ -146,7 +146,7 @@ class PresentationService:
         :return: PresentationResult containing final HTML and metadata.
         """
         extracted_text = self.pdf_service.extract_from_bytes(pdf_bytes)
-        return self.create_from_text(
+        return self._create_from_text(
             text=extracted_text,
             topic=topic
         )
@@ -209,5 +209,4 @@ if __name__ == "__main__":
     print(f" Saved presentation to: {output_file.resolve()}")
     print("==========================================\n")
 
-    # Automatically open the generated presentation in the default web browser
     webbrowser.open(f"file://{output_file.resolve()}")

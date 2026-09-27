@@ -4,6 +4,7 @@ Pydantic models and schemas for PresentationGenerator.
 
 from typing import Union
 from pydantic import BaseModel, ConfigDict, Field
+from fastapi import UploadFile
 
 
 class TextChunk(BaseModel):
@@ -44,3 +45,10 @@ class PresentationResult(BaseModel):
     slides_count: int
     topic: str
     slides: list[str] = Field(default_factory=list)
+
+class PDFPresentationRequest(BaseModel):
+    """
+    Represents the request with pdf bytes
+    """
+
+    pdf: UploadFile
