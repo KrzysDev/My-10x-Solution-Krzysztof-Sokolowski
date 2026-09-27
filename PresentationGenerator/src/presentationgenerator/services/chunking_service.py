@@ -6,7 +6,7 @@ class ChunkingService:
     def __init__(self):
         pass
 
-    def chunk_text(self, text: str, chunk_size: int = 10) -> list[TextChunk]:
+    def chunk_text(self, text: str, chunk_size: int = 20) -> list[TextChunk]:
         """
         Splits text into sentence-based chunks and wraps them in TextChunk models.
         """

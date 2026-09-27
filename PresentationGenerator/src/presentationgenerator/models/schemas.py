@@ -34,3 +34,13 @@ class Plan(BaseModel):
     @property
     def Content(self) -> str:
         return self.content
+
+
+class PresentationResult(BaseModel):
+    """
+    Represents the final generated presentation.
+    """
+    html: str
+    slides_count: int
+    topic: str
+    slides: list[str] = Field(default_factory=list)
