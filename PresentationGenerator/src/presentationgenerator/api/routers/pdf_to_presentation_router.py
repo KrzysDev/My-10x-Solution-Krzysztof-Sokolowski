@@ -14,7 +14,7 @@ service = PresentationService()
 
 
 @router.post("/presentation", response_model=PresentationResult, tags=["presentation"])
-@limiter.limit("5/minute")
+@limiter.limit("1/minute")
 async def presentation(
     request: Request,
     file: UploadFile = File(...),
