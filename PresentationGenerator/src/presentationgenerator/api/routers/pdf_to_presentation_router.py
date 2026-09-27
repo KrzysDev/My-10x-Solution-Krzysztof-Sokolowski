@@ -1,11 +1,12 @@
 import io
 from pathlib import Path
-from fastapi import APIRouter, UploadFile, File, HTTPException
+from fastapi import APIRouter, UploadFile, File, HTTPException, Request
 from pypdf import PdfReader
 from pypdf.errors import PdfReadError
 
 from presentationgenerator.services.presentation_service import PresentationService
 from presentationgenerator.models.schemas import PresentationResult
+from presentationgenerator.api.limiter import limiter
 
 router = APIRouter()
 
@@ -13,9 +14,15 @@ service = PresentationService()
 
 
 @router.post("/presentation", response_model=PresentationResult, tags=["presentation"])
-async def presentation(file: UploadFile = File(...), chunk_size: int = 10):
+@limiter.limit("5/minute")
+async def presentation(
+    request: Request,
+    file: UploadFile = File(...),
+    chunk_size: int = 10
+):
     """
     Receives an uploaded PDF file, validates it, and generates a full presentation.
+    Rate limited to 5 requests per minute per IP.
     """
     if file.filename and not file.filename.lower().endswith(".pdf"):
         raise HTTPException(status_code=400, detail="Uploaded file must have a .pdf extension.")

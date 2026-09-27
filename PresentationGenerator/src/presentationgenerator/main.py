@@ -1,4 +1,8 @@
 from fastapi import FastAPI
+from slowapi import _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
+
+from presentationgenerator.api.limiter import limiter
 from presentationgenerator.api.routers.pdf_to_presentation_router import router as presentation_router
 
 app = FastAPI(
@@ -7,10 +11,15 @@ app = FastAPI(
     version="0.0.1",
 )
 
+# Configure SlowAPI rate limiter on FastAPI application state
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
 app.include_router(presentation_router)
+
 
 @app.get("/", tags=["root"])
 def root():
     return {
-        "something something i will add later lorem ipsum lorem ipsum"
+        "message": "Presentation Generator API is running"
     }
