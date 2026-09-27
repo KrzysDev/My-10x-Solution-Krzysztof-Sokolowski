@@ -5,7 +5,7 @@ class ChunkingService:
     def __init__(self):
         pass
 
-    def chunk_text(self, text: str, chunk_size: int= 100):
+    def chunk_text(self, text: str, chunk_size: int = 10):
         pattern = r'[A-ZĄĆĘŁŃÓŚŹŻ][^.]*\.' 
         matches = re.findall(pattern, text)
 
@@ -18,6 +18,8 @@ class ChunkingService:
                 "id" : counter,
                 "content" : matches[i:i + chunk_size]
             })
+
+            counter += 1
 
 
         return chunks

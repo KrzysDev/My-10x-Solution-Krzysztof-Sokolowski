@@ -5,6 +5,8 @@ import tempfile
 
 from tkinter import filedialog as fd
 
+from presentationgenerator.services.chunking_service import ChunkingService
+
 class PDFExtractionService:
     def __init__(self):
         pass
@@ -29,7 +31,16 @@ def main():
     with open(path_to_pdf, "rb") as f:
         bytes = f.read()
 
-        print(service.extract_from_bytes(bytes))
+        text = service.extract_from_bytes(bytes)
+        chunking_service = ChunkingService()
+
+        chunks = chunking_service.chunk_text(text)
+
+        print(chunks)
+
+        print("=============Chunk size==============")
+
+        print(len(chunks))
 
 
 if __name__ == "__main__":
