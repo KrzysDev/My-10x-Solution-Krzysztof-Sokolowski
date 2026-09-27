@@ -1,17 +1,17 @@
 """
-Moduł zawierający szablon HTML dla odtwarzacza prezentacji.
-Zmienna PROGRAM_HTML_TEMPLATE zawiera szablon z podwójnymi klamrami {{ i }} dla styli CSS i kodu JS,
-oraz pojedynczą klamrę {slides} dla wstrzyknięcia tablicy slajdów za pomocą .format(slides=...).
+Module containing the HTML template for the presentation player.
+PROGRAM_HTML_TEMPLATE contains doubled curly braces {{ and }} for CSS styles and JS code,
+and a single {slides} placeholder for injecting the slides array via .format(slides=...).
 """
 
 import json
 
 PROGRAM_HTML_TEMPLATE = """<!DOCTYPE html>
-<html lang="pl">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Generator Prezentacji</title>
+  <title>Presentation Studio</title>
   <style>
     :root {{
       --bg-workspace: #0f172a;
@@ -46,7 +46,7 @@ PROGRAM_HTML_TEMPLATE = """<!DOCTYPE html>
       flex-direction: column;
     }}
 
-    /* Pasek górny (PowerPoint Ribbon / Header) */
+    /* Top toolbar (PowerPoint Ribbon / Header) */
     .top-toolbar {{
       height: 54px;
       background: var(--bg-panel);
@@ -646,10 +646,10 @@ PROGRAM_HTML_TEMPLATE = """<!DOCTYPE html>
 
 def render_presentation_html(slides: list[str]) -> str:
     """
-    Renderuje gotowy plik HTML prezentacji, bezpiecznie wstrzykując listę slajdów.
-    
-    :param slides: Lista fragmentów HTML reprezentujących poszczególne slajdy
-    :return: Kompletny dokument HTML gotowy do otwarcia w przeglądarce
+    Renders the complete presentation HTML file by safely injecting the slides list.
+
+    :param slides: List of HTML fragments representing individual slides.
+    :return: Complete HTML document ready to be opened in any browser.
     """
     slides_json = json.dumps(slides, ensure_ascii=False)
     return PROGRAM_HTML_TEMPLATE.format(slides=slides_json)

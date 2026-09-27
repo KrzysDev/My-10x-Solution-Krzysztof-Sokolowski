@@ -1,10 +1,14 @@
 """
-Prompty systemowe dla agenta generującego prezentacje edukacyjne.
-Dostosowane do lokalnego modelu językowego Bielik (SpeakLeash).
+System and user prompts for presentation generation agents.
+Prompts are phrased in Polish for optimal performance with the Polish Bielik model,
+while instructing the model to match the language of the source input.
 """
 
 PLANNING_PROMPT = """Jesteś ekspertem dydaktyki i projektantem prezentacji multimedialnych dla nauczycieli.
 Twoim zadaniem jest przeanalizowanie poniższego fragmentu tekstu (chunku) i zaplanowanie DOKŁADNIE JEDNEGO slajdu edukacyjnego.
+
+BARDZO WAŻNA ZASADA JĘZYKOWA:
+Zawsze twórz cały plan w DOKŁADNIE TYM SAMYM JĘZYKU, w jakim jest dostarczony poniższy tekst źródłowy (np. jeśli tekst źródłowy jest po polsku – pisz plan po polsku; jeśli po angielsku – pisz po angielsku).
 
 Tekst źródłowy:
 \"\"\"
@@ -13,27 +17,21 @@ Tekst źródłowy:
 
 Zasady projektowania:
 1. Zwięzłość: Na slajdzie nie może być ściany tekstu! Maksymalnie 3-4 punkty lub krótkie akapity (uczeń/słuchacz musi przyswoić treść w kilka sekund).
-2. Wybór układu: Wybierz jeden z gotowych szablonów:
-   - [LAYOUT_CARDS_3]: 3 kolumny/karty podsumowujące kluczowe pojęcia
-   - [LAYOUT_COMPARE_2]: 2 kolumny zestawiające dwa zagadnienia, zalety/wady lub definicje
-   - [LAYOUT_STAT_HIGHLIGHT]: 1 duża kluczowa liczba/fakt po lewej + lista wniosków po prawej
-   - [LAYOUT_HIGHLIGHT_LIST]: Ważny cytat/zasada w ramce na górze + 2-3 zwięzłe punkty poniżej
-3. Tytuł: Krótki, chwytliwy (maksymalnie 6-7 słów).
-4. Etykieta (Tag): Kategoria tematyczna (np. "Wprowadzenie", "Definicja", "Przykłady", "Podsumowanie").
+2. Struktura: Zwróć plan wyłącznie w postaci czytelnych punktów (bullet points).
+3. Elementy do uwzględnienia w punktach:
+   - Tytuł slajdu (krótki, chwytliwy, maks. 6-8 słów)
+   - Kategoria / Etykieta (np. Wprowadzenie, Definicja, Kluczowe pojęcia, Podsumowanie)
+   - Podtytuł lub myśl przewodnia (1 zwięzłe zdanie)
+   - Rekomendowany układ (np. 2 kolumny / porównanie, 3 karty pojęć, statystyka z wnioskiem, cytat z listą)
+   - Punkty z kluczową treścią (3-4 zwięzłe punkty)
 
-Zwróć plan w następującym zwięzłym formacie:
-TYTUŁ: <krótki tytuł>
-TAG: <kategoria>
-PODTYTUŁ: <opcjonalne 1 zdanie wyjaśnienia>
-UKŁAD: <jeden z: LAYOUT_CARDS_3 | LAYOUT_COMPARE_2 | LAYOUT_STAT_HIGHLIGHT | LAYOUT_HIGHLIGHT_LIST>
-KLUCZOWA_TREŚĆ:
-- Punkt 1: <treść>
-- Punkt 2: <treść>
-- Punkt 3: <treść>
+Zwróć TYLKO plan w punktach jako zwykły tekst, bez żadnych dodatkowych wstępów ani komentarzy.
 """
 
+CREATING_PRESENTATION_PROMPT = """Jesteś programistą interfejsów slajdów. Na podstawie przygotowanego planu slajdu wygeneruj CZYSTY, POPRAWNY fragment HTML.
 
-CREATING_PRESENTATION_PROMPT = """Jesteś programistą interfejsów slajdów. Na podstawie przygotowanego planu slajdu wygeneruj CZYSTY fragment HTML.
+BARDZO WAŻNA ZASADA JĘZYKOWA:
+Zawsze generuj całą treść tekstową na slajdzie w DOKŁADNIE TYM SAMYM JĘZYKU, w jakim jest przygotowany plan slajdu.
 
 Plan slajdu:
 \"\"\"
@@ -54,7 +52,7 @@ BARDZO WAŻNE WYTYCZNE DOTYCZĄCE KODU:
    - Listy: `bullet-list`, `bullet-item`, `bullet-icon` (np. <span class="bullet-icon">✓</span> lub cyfra)
    - Wyróżnienia: `highlight-box` (z tekstem wewnątrz <p>)
    - Statystyka: `stat-display`, `stat-number` (duża liczba), `stat-label`
-   - Stopka: `slide-footer` (zawiera <span>Temat</span> i <span>{slide_number} / {total_slides}</span>)
-4. Tekst musi być zwięzły, by nie wykraczał poza ustalony rozmiar slajdu.
+   - Stopka: `slide-footer` (zawiera <span>{presentation_topic}</span> i <span>{slide_number} / {total_slides}</span>)
+4. Tekst musi być zwięzły, by nie wykraczał poza ustalony rozmiar slajdu 16:9.
 5. Zwróć kod wewnątrz bloku markdown ```html ... ```.
 """
