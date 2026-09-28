@@ -5,7 +5,7 @@ Pydantic models and schemas for PresentationGenerator.
 from typing import Union
 from pydantic import BaseModel, ConfigDict, Field
 from fastapi import UploadFile
-
+from pydantic import BaseModel, EmailStr
 
 class TextChunk(BaseModel):
     """
@@ -52,3 +52,12 @@ class PDFPresentationRequest(BaseModel):
     """
 
     pdf: UploadFile
+
+
+class EmailPasswordRequest(BaseModel):
+    email: EmailStr
+    password: str
+
+
+class TokenRequest(BaseModel):
+    token: str
