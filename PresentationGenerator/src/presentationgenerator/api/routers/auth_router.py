@@ -8,7 +8,6 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 service = AuthService()
 
 
-
 @router.post("/register", summary="Register a new account with email and password")
 async def register(body: EmailPasswordRequest):
     """Creates a new user account. Returns the created user object."""
@@ -37,12 +36,6 @@ async def delete_account(body: TokenRequest):
     This action is irreversible.
     """
     return await service.delete_account(token=body.token)
-
-
-@router.get("/anonymous", summary="Sign in anonymously (no credentials required)")
-async def sign_in_anonymously():
-    """Creates an anonymous session. Kept for quick testing."""
-    return await service.sign_in_anonymously()
 
 
 @router.post("/verify", summary="Verify a JWT token")

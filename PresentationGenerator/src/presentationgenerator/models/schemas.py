@@ -61,3 +61,30 @@ class EmailPasswordRequest(BaseModel):
 
 class TokenRequest(BaseModel):
     token: str
+
+
+class SavePresentationRequest(BaseModel):
+    """Request body for manually saving a generated presentation."""
+    token: str
+    topic: str
+    html: str
+    slides_count: int
+
+
+class SavedPresentation(BaseModel):
+    """A presentation row returned from the database (list view — no HTML)."""
+    id: str
+    user_id: str
+    topic: str
+    slides_count: int
+    created_at: str
+
+
+class SavedPresentationFull(BaseModel):
+    """A single presentation row with full HTML (detail view)."""
+    id: str
+    user_id: str
+    topic: str
+    slides_count: int
+    html: str
+    created_at: str

@@ -5,6 +5,7 @@ from slowapi.errors import RateLimitExceeded
 from presentationgenerator.api.limiter import limiter
 from presentationgenerator.api.routers.pdf_to_presentation_router import router as presentation_router
 from presentationgenerator.api.routers.auth_router import router as auth_router
+from presentationgenerator.api.routers.saved_presentations_router import router as saved_presentations_router
 
 
 app = FastAPI(
@@ -18,6 +19,7 @@ app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 app.include_router(presentation_router)
 app.include_router(auth_router)
+app.include_router(saved_presentations_router)
 
 
 @app.get("/", tags=["root"])

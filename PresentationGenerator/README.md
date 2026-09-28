@@ -1,122 +1,122 @@
 # PDF to Presentation Generator
 
-**Zamień dowolny plik PDF w gotową, HTML-ową prezentację — w minuty zamiast godzin.**
+**Turn any PDF file into a ready-to-use HTML presentation — in minutes instead of hours.**
 
-Projekt wykonany jako capstone stażu FlyRank Backend AI Engineering.
-
----
-
-## Co to robi?
-
-Wysyłasz plik PDF przez API. System wyciąga z niego tekst, dzieli go na slajdy, planuje każdy slajd przy pomocy lokalnego modelu AI (Bielik — polskie LLM), a na końcu zwraca gotową prezentację w formacie HTML z podziałem 16:9.
-
-Nauczyciel zamiast 2 godzin pracy ma prezentację w kilka minut.
+Built as a capstone project for the FlyRank Backend AI Engineering Internship.
 
 ---
 
-## Zaimplementowane koncepty capstone
+## What does it do?
 
-| # | Koncept | Gdzie w kodzie |
+You send a PDF file through the API. The system extracts its text, splits it into slides, plans each slide using a local AI model (Bielik — a Polish open-source LLM), and returns a complete browser-ready HTML presentation with 16:9 slide layout and navigation.
+
+A teacher who used to spend 2 hours preparing a presentation from a textbook chapter now gets it done in a few minutes.
+
+---
+
+## Implemented capstone concepts
+
+| # | Concept | Where in the code |
 |---|---|---|
 | 1 | **API endpoints** | `api/routers/pdf_to_presentation_router.py`, `api/routers/auth_router.py` |
-| 2 | **Authentication** | `services/auth_serivce.py` — rejestracja, logowanie, wylogowanie, usuwanie konta (Supabase Auth) |
-| 3 | **LLM integration** | `services/ai_service.py` — Ollama + Bielik (lokalny model) |
-| 4 | **Rate limiting** *(swap: zastępuje Background jobs — generowanie jest lokalnie szybkie i nie wymaga kolejki)* | `api/limiter.py` — SlowAPI, 1 req/min per IP |
-| 5 | **Caching** | *(planowane — hash MD5 PDF → wynik)* |
+| 2 | **Authentication** | `services/auth_serivce.py` — register, login, logout, delete account (Supabase Auth) |
+| 3 | **LLM integration** | `services/ai_service.py` — Ollama + Bielik (local model) |
+| 4 | **Rate limiting** *(swap: replaces Background jobs — local generation is fast enough to not require a queue)* | `api/limiter.py` — SlowAPI, 1 req/min per IP |
+| 5 | **Database** | *(planned - saving presentations of the users)* |
 
-Łącznie: 4 pewne + caching w toku = **5 konceptów**.
+Total: 4 confirmed + caching in progress = **5 concepts**.
 
 ---
 
-## Wymagania
+## Requirements
 
 - Python 3.12+
 - [uv](https://docs.astral.sh/uv/) — package manager
-- [Ollama](https://ollama.com/) — lokalny LLM runtime
-- Konto Supabase (darmowy tier)
+- [Ollama](https://ollama.com/) — local LLM runtime
+- Supabase account (free tier)
 
 ---
 
-## Uruchomienie — krok po kroku
+## Running the project — step by step
 
-### 1. Sklonuj repo i przejdź do folderu projektu
+### 1. Clone the repo and navigate to the project folder
 
 ```bash
 git clone https://github.com/KrzysDev/My-10x-Solution.git
 cd My-10x-Solution/PresentationGenerator
 ```
 
-### 2. Skonfiguruj zmienne środowiskowe
+### 2. Configure environment variables
 
-Skopiuj plik `.env.example` do `.env` i uzupełnij wartości:
+Copy `.env.example` to `.env` and fill in your values:
 
 ```bash
 cp .env.example .env
 ```
 
-Zawartość `.env`:
+Contents of `.env`:
 
 ```env
-SUPABASE_URL=https://<twoj-projekt>.supabase.co
-SUPABASE_KEY=<twoj-anon-key>
-SUPABASE_SERVICE_KEY=<twoj-service-role-key>   # potrzebny do usuwania kont
+SUPABASE_URL=https://<your-project>.supabase.co
+SUPABASE_KEY=<your-anon-key>
+SUPABASE_SERVICE_KEY=<your-service-role-key>   # required for account deletion
 ```
 
-Klucze znajdziesz w panelu Supabase: **Project Settings → API**.
+You can find your keys in the Supabase dashboard: **Project Settings → API**.
 
-### 3. Zainstaluj zależności
+### 3. Install dependencies
 
 ```bash
 uv sync
 ```
 
-### 4. Pobierz model AI (Bielik)
+### 4. Download the AI model (Bielik)
 
 ```bash
 ollama pull SpeakLeash/bielik-minitron-7B-v3.0-instruct:Q8_0
 ```
 
-> Model waży ~7 GB. Pobierz go raz; Ollama cachuje go lokalnie.
+> The model is ~7 GB. Download it once; Ollama caches it locally.
 
-### 5. Uruchom serwer
+### 5. Start the server
 
 ```bash
 uv run uvicorn presentationgenerator.main:app --reload
 ```
 
-API jest dostępne pod: **http://localhost:8000**
+API available at: **http://localhost:8000**
 
-Dokumentacja Swagger: **http://localhost:8000/docs**
+Swagger docs: **http://localhost:8000/docs**
 
 ---
 
-## 5-minutowe demo
+## 5-minute demo
 
-1. **Zarejestruj konto:**
+1. **Register an account:**
    ```
    POST /auth/register
-   { "email": "demo@example.com", "password": "haslo123" }
+   { "email": "demo@example.com", "password": "password123" }
    ```
 
-2. **Zaloguj się i skopiuj `access_token` z odpowiedzi:**
+2. **Log in and copy the `access_token` from the response:**
    ```
    POST /auth/login
-   { "email": "demo@example.com", "password": "haslo123" }
+   { "email": "demo@example.com", "password": "password123" }
    ```
 
-3. **Wyślij PDF z tokenem:**
-   - Otwórz http://localhost:8000/docs
+3. **Send a PDF with the token:**
+   - Open http://localhost:8000/docs
    - Endpoint: `POST /presentation`
    - Query param: `token=<access_token>`
-   - Body: wyślij dowolny plik `.pdf`
+   - Body: upload any `.pdf` file
 
-4. **Odbierz prezentację:**
-   - Odpowiedź zawiera pole `html` — wklej je do pliku `.html` i otwórz w przeglądarce
-   - Lub użyj pola `slides` (lista slajdów osobno)
+4. **Receive the presentation:**
+   - The JSON response contains an `html` field — save it as an `.html` file and open it in your browser
+   - Or use the `slides` field (list of individual slide HTML snippets)
 
 ---
 
-## Struktura projektu
+## Project structure
 
 ```
 PresentationGenerator/
@@ -129,59 +129,59 @@ PresentationGenerator/
 │   │       └── pdf_to_presentation_router.py  # /presentation endpoint
 │   ├── models/
 │   │   ├── schemas.py                 # Pydantic models
-│   │   ├── prompts.py                 # LLM prompts (PL → Bielik)
+│   │   ├── prompts.py                 # LLM prompts (Polish → Bielik)
 │   │   └── html_program_template.py  # HTML presentation template
 │   └── services/
 │       ├── auth_serivce.py            # Supabase Auth logic
 │       ├── ai_service.py              # Ollama LLM wrapper
 │       ├── planning_service.py        # Slide planning via LLM
 │       ├── chunking_service.py        # Text → sentence chunks
-│       ├── pdf_extraction_service.py  # PDF → text
-│       └── presentation_service.py   # Orchestrator
+│       ├── pdf_extraction_service.py  # PDF → text extraction
+│       └── presentation_service.py   # Pipeline orchestrator
 ├── pyproject.toml
 └── README.md
 ```
 
 ---
 
-## Endpointy API
+## API endpoints
 
 ### Auth (`/auth`)
 
-| Metoda | Endpoint | Opis |
+| Method | Endpoint | Description |
 |---|---|---|
-| `POST` | `/auth/register` | Rejestracja email + hasło |
-| `POST` | `/auth/login` | Logowanie, zwraca `access_token` |
-| `POST` | `/auth/logout` | Wylogowanie (unieważnia token) |
-| `DELETE` | `/auth/account` | Trwałe usunięcie konta |
-| `GET` | `/auth/anonymous` | Logowanie anonimowe (do testów) |
-| `POST` | `/auth/verify` | Weryfikacja tokenu JWT |
+| `POST` | `/auth/register` | Register with email + password |
+| `POST` | `/auth/login` | Log in, returns `access_token` |
+| `POST` | `/auth/logout` | Log out (invalidates token) |
+| `DELETE` | `/auth/account` | Permanently delete the account |
+| `GET` | `/auth/anonymous` | Anonymous sign-in (for testing) |
+| `POST` | `/auth/verify` | Verify a JWT token |
 
-### Prezentacje
+### Presentations
 
-| Metoda | Endpoint | Opis |
+| Method | Endpoint | Description |
 |---|---|---|
-| `POST` | `/presentation` | Upload PDF → zwraca prezentację HTML |
+| `POST` | `/presentation` | Upload a PDF → returns HTML presentation |
 
 ---
 
-## Bezpieczeństwo
+## Security
 
-- Klucze API wyłącznie w `.env` — nigdy w kodzie ani w repo
-- `.gitignore` wyklucza `.env`, `*.db`, `.venv/`
-- Wszystkie chronione endpointy wymagają ważnego JWT z Supabase
-- Rate limiting: 1 request / minutę na IP (endpoint generowania)
-
----
-
-## Pomysły na przyszłość
-
-- Zapis historii prezentacji w bazie Supabase per użytkownik
-- Background job (Celery) dla długich PDF-ów
-- Eksport do `.pptx` zamiast tylko HTML
-- Cache wyników na podstawie hash pliku PDF
-- Obsługa wielu modeli LLM (OpenAI, Gemini jako fallback)
+- API keys stored only in `.env` — never in code or in the repo
+- `.gitignore` excludes `.env`, `*.db`, `.venv/`
+- All protected endpoints require a valid Supabase JWT
+- Rate limiting: 1 request / minute per IP on the generation endpoint
 
 ---
 
-*Autor: Krzysztof Sokołowski · FlyRank Backend AI Engineering Internship · 2026*
+## Future ideas
+
+- Save presentation history to Supabase database per user
+- Background job (Celery) for large PDFs
+- Export to `.pptx` instead of HTML only
+- Cache results based on PDF file hash
+- Support multiple LLM providers (OpenAI, Gemini as fallback)
+
+---
+
+*Author: Krzysztof Sokołowski · FlyRank Backend AI Engineering Internship · 2026*
