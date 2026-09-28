@@ -14,12 +14,18 @@ A teacher who used to spend 2 hours preparing a presentation from a textbook cha
 
 ---
 
+## Non-goals
+
+- **No PowerPoint (.pptx) export** — the output is a browser-ready HTML presentation, and that is the final format.
+
+---
+
 ## Implemented capstone concepts
 
 | # | Concept | Where in the code |
 |---|---|---|
 | 1 | **API endpoints** | `api/routers/pdf_to_presentation_router.py`, `api/routers/auth_router.py`, `api/routers/saved_presentations_router.py` |
-| 2 | **Database** | `db/create_presentations_table.sql`, `services/presentation_storage_service.py` — Supabase PostgreSQL persistence with Row-Level Security (RLS) |
+| 2 | **Database** | `services/presentation_storage_service.py`, `api/routers/saved_presentations_router.py` — Supabase PostgreSQL persistence with Row-Level Security (RLS), configured in the Supabase dashboard |
 | 3 | **Authentication** | `services/auth_serivce.py` — register, login, logout, delete account (Supabase Auth) |
 | 4 | **LLM integration** | `services/ai_service.py` — Ollama + Bielik (local model) |
 | 5 | **Rate limiting** *(swap: replaces Background jobs)* | `api/limiter.py` — SlowAPI, 1 req/min per IP |
@@ -42,7 +48,7 @@ Total: **5 full concepts implemented** ✅
 ### 1. Clone the repo and navigate to the project folder
 
 ```bash
-git clone https://github.com/KrzysDev/My-10x-Solution.git
+git clone https://github.com/KrzysDev/My-10x-Solution-Krzysztof-Sokolowski.git
 cd My-10x-Solution/PresentationGenerator
 ```
 
@@ -187,7 +193,7 @@ PresentationGenerator/
 ## Future ideas
 
 - Background job (Celery / Redis) for large multi-page PDFs
-- Export to `.pptx` (PowerPoint format)
+- Adding images to slides
 - Cache results based on PDF file hash
 - Support multiple LLM providers (OpenAI, Gemini as fallback)
 

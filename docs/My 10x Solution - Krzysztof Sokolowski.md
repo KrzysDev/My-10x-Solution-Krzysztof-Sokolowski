@@ -8,6 +8,8 @@ The same applies to students who study from PDFs: to create a revision presentat
 
 **My 10x claim:** preparing a presentation from pages of study material that used to take 2 hours now takes a few minutes — it is more than 20× faster.
 
+**Non-goal:** export to PowerPoint (.pptx) will NOT be built — the final output is a browser-ready HTML presentation. Adding images to slides is a possible future stretch, not part of this project.
+
 ---
 
 ## 2. How does my solution work?
@@ -39,7 +41,7 @@ For content generation I use **Bielik** — an open-source Polish language model
 | # | Concept | Where in the code | Description |
 |---|---|---|---|
 | 1 | **API endpoints** | `api/routers/pdf_to_presentation_router.py` `api/routers/auth_router.py` `api/routers/saved_presentations_router.py` | HTTP API with correct status codes, validation, and options for JSON response or direct HTML file download. |
-| 2 | **Database** | `db/create_presentations_table.sql` `services/presentation_storage_service.py` `api/routers/saved_presentations_router.py` | Supabase PostgreSQL persistence with Row-Level Security (RLS). Saved presentations survive server restarts and are scoped per user. |
+| 2 | **Database** | `services/presentation_storage_service.py` `api/routers/saved_presentations_router.py` | Supabase PostgreSQL persistence with Row-Level Security (RLS), configured in the Supabase dashboard. Saved presentations survive server restarts and are scoped per user. |
 | 3 | **Authentication** | `services/auth_serivce.py` | Supabase Auth — register by email, login, logout, delete account. Protected endpoints require a valid JWT. |
 | 4 | **LLM integration** | `services/ai_service.py` `services/planning_service.py` `services/presentation_service.py` | Two separate LLM calls per slide: first planning (bullet points), then HTML generation. Model: Bielik 7B via Ollama. |
 | 5 | **Rate limiting** *(swap)* | `api/limiter.py` | SlowAPI — limit of 1 request/minute per IP on generation endpoints. Returns 429 with a Retry-After header. **Swap for Background jobs** — generation runs locally and is fast enough not to block the server for typical single-request use. |
@@ -61,7 +63,7 @@ For content generation I use **Bielik** — an open-source Polish language model
 
 ```bash
 # 1. Clone the repo
-git clone https://github.com/KrzysDev/My-10x-Solution.git
+git clone https://github.com/KrzysDev/My-10x-Solution-Krzysztof-Sokolowski.git
 cd My-10x-Solution/PresentationGenerator
 
 # 2. Fill in environment variables
