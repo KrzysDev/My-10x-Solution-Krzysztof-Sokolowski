@@ -18,13 +18,13 @@ A teacher who used to spend 2 hours preparing a presentation from a textbook cha
 
 | # | Concept | Where in the code |
 |---|---|---|
-| 1 | **API endpoints** | `api/routers/pdf_to_presentation_router.py`, `api/routers/auth_router.py` |
-| 2 | **Authentication** | `services/auth_serivce.py` — register, login, logout, delete account (Supabase Auth) |
-| 3 | **LLM integration** | `services/ai_service.py` — Ollama + Bielik (local model) |
-| 4 | **Rate limiting** *(swap: replaces Background jobs — local generation is fast enough to not require a queue)* | `api/limiter.py` — SlowAPI, 1 req/min per IP |
-| 5 | **Database** | *(planned - saving presentations of the users)* |
+| 1 | **API endpoints** | `api/routers/pdf_to_presentation_router.py`, `api/routers/auth_router.py`, `api/routers/saved_presentations_router.py` |
+| 2 | **Database** | `db/create_presentations_table.sql`, `services/presentation_storage_service.py` — Supabase PostgreSQL persistence with Row-Level Security (RLS) |
+| 3 | **Authentication** | `services/auth_serivce.py` — register, login, logout, delete account (Supabase Auth) |
+| 4 | **LLM integration** | `services/ai_service.py` — Ollama + Bielik (local model) |
+| 5 | **Rate limiting** *(swap: replaces Background jobs)* | `api/limiter.py` — SlowAPI, 1 req/min per IP |
 
-Total: 4 confirmed + caching in progress = **5 concepts**.
+Total: **5 full concepts implemented** ✅
 
 ---
 
@@ -157,11 +157,20 @@ PresentationGenerator/
 | `GET` | `/auth/anonymous` | Anonymous sign-in (for testing) |
 | `POST` | `/auth/verify` | Verify a JWT token |
 
-### Presentations
+### Presentations (`/presentation`)
 
 | Method | Endpoint | Description |
 |---|---|---|
-| `POST` | `/presentation` | Upload a PDF → returns HTML presentation |
+| `POST` | `/presentation` | Upload a PDF → returns presentation as JSON (`html`, `slides`, metadata) |
+| `POST` | `/presentation/download` | Upload a PDF → directly downloads presentation as a `.html` file |
+
+### Saved Presentations (`/presentations`)
+
+| Method | Endpoint | Description |
+|---|---|---|
+| `POST` | `/presentations/save` | Save a generated presentation to Supabase database |
+| `GET` | `/presentations/me` | List all saved presentations for the user (lightweight, without HTML) |
+| `GET` | `/presentations/{id}` | Retrieve a single saved presentation with full HTML |
 
 ---
 
@@ -170,15 +179,15 @@ PresentationGenerator/
 - API keys stored only in `.env` — never in code or in the repo
 - `.gitignore` excludes `.env`, `*.db`, `.venv/`
 - All protected endpoints require a valid Supabase JWT
-- Rate limiting: 1 request / minute per IP on the generation endpoint
+- Rate limiting: 1 request / minute per IP on generation endpoints
+- Row-Level Security (RLS) ensures users only have access to their own presentations
 
 ---
 
 ## Future ideas
 
-- Save presentation history to Supabase database per user
-- Background job (Celery) for large PDFs
-- Export to `.pptx` instead of HTML only
+- Background job (Celery / Redis) for large multi-page PDFs
+- Export to `.pptx` (PowerPoint format)
 - Cache results based on PDF file hash
 - Support multiple LLM providers (OpenAI, Gemini as fallback)
 

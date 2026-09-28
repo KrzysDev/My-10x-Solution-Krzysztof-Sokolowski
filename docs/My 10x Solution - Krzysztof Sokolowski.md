@@ -38,15 +38,13 @@ For content generation I use **Bielik** — an open-source Polish language model
 
 | # | Concept | Where in the code | Description |
 |---|---|---|---|
-| 1 | **API endpoints** | `api/routers/pdf_to_presentation_router.py` `api/routers/auth_router.py` | HTTP API with correct status codes and Pydantic validation. The `POST /presentation` endpoint accepts a PDF file and returns a JSON object with the HTML presentation. |
-| 2 | **Authentication** | `services/auth_serivce.py` | Supabase Auth — register by email, login, logout, delete account. The protected `/presentation` endpoint requires a valid JWT. |
-| 3 | **LLM integration** | `services/ai_service.py` `services/planning_service.py` `services/presentation_service.py` | Two separate LLM calls per slide: first planning (bullet points), then HTML generation. Model: Bielik 7B via Ollama. |
-| 4 | **Rate limiting** *(swap)* | `api/limiter.py` | SlowAPI — limit of 1 request/minute per IP on the generation endpoint. Returns 429 with a Retry-After header. **Swap for Background jobs** — generation runs locally and is fast enough not to block the server for typical use. |
-| 5 | **Containerized stack** *(swap)* | `docker-compose.yml` *(planned)* | The whole system starts with `docker compose up`. **Swap for Caching** — caching is planned as a future improvement; containerization is required for M4 (runnable by a stranger) and is higher priority. |
+| 1 | **API endpoints** | `api/routers/pdf_to_presentation_router.py` `api/routers/auth_router.py` `api/routers/saved_presentations_router.py` | HTTP API with correct status codes, validation, and options for JSON response or direct HTML file download. |
+| 2 | **Database** | `db/create_presentations_table.sql` `services/presentation_storage_service.py` `api/routers/saved_presentations_router.py` | Supabase PostgreSQL persistence with Row-Level Security (RLS). Saved presentations survive server restarts and are scoped per user. |
+| 3 | **Authentication** | `services/auth_serivce.py` | Supabase Auth — register by email, login, logout, delete account. Protected endpoints require a valid JWT. |
+| 4 | **LLM integration** | `services/ai_service.py` `services/planning_service.py` `services/presentation_service.py` | Two separate LLM calls per slide: first planning (bullet points), then HTML generation. Model: Bielik 7B via Ollama. |
+| 5 | **Rate limiting** *(swap)* | `api/limiter.py` | SlowAPI — limit of 1 request/minute per IP on generation endpoints. Returns 429 with a Retry-After header. **Swap for Background jobs** — generation runs locally and is fast enough not to block the server for typical single-request use. |
 
 > Swap #1 (Rate limiting instead of Background jobs): presentation generation runs locally via Ollama and does not depend on external services with API limits — synchronous processing is sufficient for typical usage.
-
-> Swap #2 (Containerized stack instead of Caching): caching is planned as a future improvement; Docker setup is required for M4 (runnable by a stranger) and takes priority.
 
 ---
 

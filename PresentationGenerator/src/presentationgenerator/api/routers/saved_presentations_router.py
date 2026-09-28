@@ -18,9 +18,6 @@ auth = AuthService()
 storage = PresentationStorageService()
 
 
-# ------------------------------------------------------------------
-# GET /presentations/me  — list all presentations for the current user
-# ------------------------------------------------------------------
 @router.get("/me", response_model=list[SavedPresentation], summary="List all saved presentations for the authenticated user")
 async def list_my_presentations(token: str):
     """
@@ -32,9 +29,6 @@ async def list_my_presentations(token: str):
     return storage.get_all_for_user(str(user.id))
 
 
-# ------------------------------------------------------------------
-# GET /presentations/{id}  — retrieve a single presentation with full HTML
-# ------------------------------------------------------------------
 @router.get("/{presentation_id}", response_model=SavedPresentationFull, summary="Get a single saved presentation by ID (includes full HTML)")
 async def get_presentation(presentation_id: str, token: str):
     """
@@ -44,10 +38,6 @@ async def get_presentation(presentation_id: str, token: str):
     user = auth.verify_token(token)
     return storage.get_by_id(presentation_id=presentation_id, user_id=str(user.id))
 
-
-# ------------------------------------------------------------------
-# POST /presentations/save  — explicitly save a presentation
-# ------------------------------------------------------------------
 @router.post("/save", response_model=SavedPresentation, status_code=201, summary="Save a generated presentation to the database")
 async def save_presentation(body: SavePresentationRequest):
     """
